@@ -27,26 +27,21 @@ public class CommentService {
 
     // 댓글 등록
     @Transactional
-    public UserResponseDto<Comment> addComment(CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest) {
-        Users user = checkJwtToken(httpServletRequest);
-
+    public UserResponseDto<Comment> addComment(CommentRequestDto commentRequestDto, Users user) {
         Post post = postRepository.findById(commentRequestDto.getPostId()).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
+                () -> new NullPointerException("해당 게시글이 존재하지 않습니다.")
         );
 
-
         Comment comment = new Comment(user, commentRequestDto, post);
-        commentRepository.save(comment);
+        commentRepository.saveAndFlush(comment);
         return UserResponseDto.setSuccess("댓글이 등록되었습니다.");
     }
 
     // 댓글 수정
     @Transactional
-    public UserResponseDto<Comment> updateComment(Long id, CommentRequestDto commentRequestDto, HttpServletRequest httpServletRequest) {
-        Users user = checkJwtToken(httpServletRequest);
-
+    public UserResponseDto<Comment> updateComment(Long id, CommentRequestDto commentRequestDto, Users user) {
         Comment comment = commentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
+                () -> new NullPointerException("해당 댓글이 존재하지 않습니다.")
         );
 
         if (comment.getUsers().getUsername().equals(user.getUsername()) || user.getRole().equals(user.getRole().ADMIN)) {
@@ -60,11 +55,9 @@ public class CommentService {
 
     // 댓글 삭제
     @Transactional
-    public UserResponseDto<Comment> deleteComment(Long id, HttpServletRequest httpServletRequest) {
-        Users user = checkJwtToken(httpServletRequest);
-
+    public UserResponseDto<Comment> deleteComment(Long id, Users user) {
         Comment comment = commentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
+                () -> new NullPointerException("해당 댓글이 존재하지 않습니다.")
         );
 
         if (comment.getUsers().getUsername().equals(user.getUsername()) || user.getRole().equals(user.getRole().ADMIN)) {
