@@ -4,11 +4,12 @@ import com.sparta.spring_post.dto.PostRequestDto;
 import com.sparta.spring_post.dto.PostResponseDto;
 import com.sparta.spring_post.dto.UserResponseDto;
 import com.sparta.spring_post.entity.Post;
+import com.sparta.spring_post.security.UserDetailsImpl;
 import com.sparta.spring_post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -33,20 +34,20 @@ public class PostController {
 
     // 추가
     @PostMapping("/post")
-    public PostResponseDto createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest httpServletRequest) {
-        return postService.createPost(postRequestDto, httpServletRequest);
+    public PostResponseDto createPost(@RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.createPost(postRequestDto, userDetails.getUser());
     }
 
     // 수정
     @PutMapping("/post/{id}")
-    public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto, HttpServletRequest httpServletRequest) {
-        return postService.updatePost(id, postRequestDto, httpServletRequest);
+    public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto,  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.updatePost(id, postRequestDto, userDetails.getUser());
     }
 
     // 삭제
     @DeleteMapping("/post/{id}")
-    public UserResponseDto<Post> deletePost(@PathVariable Long id, HttpServletRequest httpServletRequest) {
-        return postService.deletePost(id, httpServletRequest);
+    public UserResponseDto<Post> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.deletePost(id, userDetails.getUser());
     }
 
 }
