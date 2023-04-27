@@ -1,12 +1,12 @@
 package com.sparta.spring_post.config;
 
-
 import com.sparta.spring_post.jwt.JwtAuthFilter;
 import com.sparta.spring_post.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -46,17 +46,21 @@ public class WebSecurityConfig {
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers("/api/user/**").permitAll()
-                .antMatchers("/api/posts/**").permitAll()
-                .antMatchers("/api/comment/**").permitAll()
-                .antMatchers("/login").permitAll()
+        http.authorizeRequests()
+                // login 없이 허용하는 페이지
+                .antMatchers(HttpMethod.GET,"/api/post").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/comment").permitAll()
+                .antMatchers("/api/signup").permitAll()
+                .antMatchers("/api/login").permitAll()
+                // 어떤 요청이든 '인증'
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-
         http.httpBasic().and();
-        
+//        http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);
+//        http.exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
+
         return http.build();
     }
 
