@@ -5,20 +5,13 @@ import com.sparta.spring_post.dto.PostResponseDto;
 import com.sparta.spring_post.dto.UserResponseDto;
 import com.sparta.spring_post.entity.Post;
 import com.sparta.spring_post.entity.Users;
-import com.sparta.spring_post.jwt.JwtUtil;
-import com.sparta.spring_post.repository.CommentRepository;
 import com.sparta.spring_post.repository.PostRepository;
-import com.sparta.spring_post.repository.UserRepository;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
@@ -26,19 +19,12 @@ public class PostService {
 
     // PostRepository 연결
     private final PostRepository postRepository;
-    private final CommentRepository commentRepository;
-    // UserRepository 연결
-    private final UserRepository userRepository;
-    // JwtUtil 연결
-    private final JwtUtil jwtUtil;
-
 
     // 전체 게시물 목록 조회
     @Transactional(readOnly = true)
     public List<PostResponseDto> getAllPosts() {
         return postRepository.findAllByOrderByCreatedAtDesc().stream().map(PostResponseDto::new).collect(Collectors.toList());
     }
-
 
     // 선택한 게시물 상세 조회
     @Transactional(readOnly = true)
