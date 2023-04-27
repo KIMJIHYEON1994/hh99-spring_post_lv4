@@ -56,21 +56,6 @@ public class UserService {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
-//        // 아이디 확인
-//        Optional<Users> found = userRepository.findByUsername(username);
-//        if (!found.isPresent()) {
-//            return UserResponseDto.setFailed("회원을 찾을 수 없습니다.");
-//        }
-//
-//        Users user = userRepository.findByUsername(username).orElseThrow();
-//
-//        // 비밀번호 확인
-//        if (!user.getPassword().equals(password)) {
-//            return UserResponseDto.setFailed("일치하지 않는 비밀번호 입니다.");
-//        }
-//
-//        httpServletResponse.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
-
         // 사용자 확인
         Users user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다.")

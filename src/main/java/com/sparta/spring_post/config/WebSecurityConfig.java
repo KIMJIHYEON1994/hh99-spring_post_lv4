@@ -48,6 +48,7 @@ public class WebSecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable();
@@ -55,10 +56,12 @@ public class WebSecurityConfig {
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers("/api/user/**").permitAll()
-                .antMatchers("/api/posts/**").permitAll()
-                .antMatchers("/api/comment/**").permitAll()
-                .antMatchers("/login").permitAll()
+        http.authorizeRequests()
+                // login 없이 허용하는 페이지
+                .antMatchers("/api/posts").permitAll()
+                .antMatchers("/api/user/signup").permitAll()
+                .antMatchers("/api/user/login").permitAll()
+                // 어떤 요청이든 '인증'
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
